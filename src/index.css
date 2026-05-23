@@ -706,3 +706,12 @@ body {
 .float-specs { display: flex; gap: 12px; margin-top: 8px; font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-dim); }
 .float-specs strong { color: var(--ink); font-weight: 500; }
 @media (max-width: 600px) { .float-card { width: clamp(130px, 42vw, 175px); } }
+
+/* ---------- STATS (by the numbers) ---------- */
+.stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); margin-top: 8px; }
+@media (max-width: 700px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+.stat-cell { background: #040406; padding: clamp(20px, 3vw, 34px) 22px; display: flex; flex-direction: column; gap: 8px; transition: background 0.3s; }
+.stat-cell:hover { background: #0c0c0e; }
+.stat-big { font-family: var(--display); font-size: clamp(40px, 5.5vw, 76px); line-height: 0.95; color: #fff; }
+.stat-en { font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-dim); }
+.stat-he { font-family: var(--he); direction: rtl; font-size: 13px; color: var(--ink-dim); }

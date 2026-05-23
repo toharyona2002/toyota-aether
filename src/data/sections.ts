@@ -1,7 +1,9 @@
 export type SectionKind =
   | "hero"
   | "manifesto"
+  | "lineup"
   | "technology"
+  | "stats"
   | "heritage"
   | "contact";
 
@@ -64,7 +66,9 @@ type Raw = Omit<Section, "index" | "z" | "x" | "y">;
 const raw: Raw[] = [
   { id: "hero", kind: "hero", dotLabel: "HERO", counterLabel: "MOBILITY FOR ALL", sweepSub: "HERO", colorA: "#EB0A1E", colorB: "#141414" },
   { id: "manifesto", kind: "manifesto", dotLabel: "MANIFESTO", counterLabel: "MANIFESTO · מניפסט", sweepSub: "MANIFESTO · מניפסט", colorA: "#EB0A1E", colorB: "#1c1c1c" },
+  { id: "lineup", kind: "lineup", dotLabel: "LINEUP", counterLabel: "LINEUP · דגמים", sweepSub: "LINEUP · דגמים", colorA: "#d4d4d8", colorB: "#18181b" },
   { id: "technology", kind: "technology", dotLabel: "TECH", counterLabel: "TECHNOLOGY · טכנולוגיה", sweepSub: "TECHNOLOGY · טכנולוגיה", colorA: "#3b82f6", colorB: "#0f172a" },
+  { id: "stats", kind: "stats", dotLabel: "NUMBERS", counterLabel: "BY THE NUMBERS · במספרים", sweepSub: "BY THE NUMBERS · במספרים", colorA: "#38bdf8", colorB: "#0b1220" },
   { id: "heritage", kind: "heritage", dotLabel: "HERITAGE", counterLabel: "HERITAGE · מורשת", sweepSub: "HERITAGE · מורשת", colorA: "#EB0A1E", colorB: "#7f1d1d" },
   { id: "contact", kind: "contact", dotLabel: "CONTACT", counterLabel: "CONTACT · צור קשר", sweepSub: "CONTACT · צור קשר", colorA: "#EB0A1E", colorB: "#141414" },
 ];
@@ -148,4 +152,32 @@ export const contact = {
   secondary: "Explore Lineup",
   footLeft: "© 2026 TOYOTA · ALL RIGHTS RESERVED",
   footRight: "MADE WITH 改善 · KAIZEN",
+};
+
+// curated flagships shown in the LINEUP grid (text + specs, no photo)
+export const lineupIds = ["chrplus", "rav4", "corolla", "landcruiser", "grsupra", "mirai"];
+export const lineupModels = lineupIds
+  .map((id) => models.find((m) => m.id === id))
+  .filter((m): m is Model => Boolean(m));
+
+export const lineup = {
+  titleHtml: "THE<br>LINEUP.",
+  he: "כל הליין-אפ · 2026",
+  count: `${models.length}`,
+};
+
+export type Stat = { value: string; en: string; he: string };
+
+// Toyota by the numbers — approximate, verify before launch.
+export const stats = {
+  titleHtml: "BY THE<br>NUMBERS.",
+  introHe: "כמעט תשעה עשורים של תנועה — בכמה מספרים.",
+  items: [
+    { value: "1937", en: "FOUNDED", he: "שנת ייסוד" },
+    { value: "300M+", en: "VEHICLES BUILT", he: "רכבים יוצרו" },
+    { value: "170+", en: "COUNTRIES", he: "מדינות ושווקים" },
+    { value: "27M+", en: "HYBRIDS SOLD", he: "היברידים נמכרו" },
+    { value: "#1", en: "GLOBAL AUTOMAKER", he: "יצרנית הרכב הגדולה בעולם" },
+    { value: "10M+", en: "CARS / YEAR", he: "רכבים בשנה" },
+  ] as Stat[],
 };

@@ -4,7 +4,9 @@ import { stationU } from "../three/flightPath";
 import {
   HeroView,
   ManifestoView,
+  LineupView,
   TechnologyView,
+  StatsView,
   HeritageView,
   ContactView,
 } from "./SectionViews";
@@ -24,8 +26,12 @@ function renderView(section: Section) {
       return <HeroView />;
     case "manifesto":
       return <ManifestoView />;
+    case "lineup":
+      return <LineupView />;
     case "technology":
       return <TechnologyView />;
+    case "stats":
+      return <StatsView />;
     case "heritage":
       return <HeritageView />;
     case "contact":

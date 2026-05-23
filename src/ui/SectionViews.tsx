@@ -1,8 +1,11 @@
 import {
   hero,
   manifesto,
+  lineup,
+  lineupModels,
   technology,
   techCards,
+  stats,
   heritage,
   contact,
   type TechIcon as TechIconKind,
@@ -27,6 +30,76 @@ function TechIcon({ icon }: { icon: TechIconKind }) {
     <svg viewBox="0 0 24 24">
       <path d="M12 2 C12 2 6 10 6 14 A6 6 0 0 0 18 14 C18 10 12 2 12 2 Z" />
     </svg>
+  );
+}
+
+export function LineupView() {
+  return (
+    <>
+      <div className="sec-mark stag d1">LINEUP · דגמים</div>
+      <div className="sec-inner">
+        <div className="models-head stag d2">
+          <div>
+            <h2
+              className="models-title"
+              dangerouslySetInnerHTML={{ __html: lineup.titleHtml }}
+            />
+            <div className="models-title-he">{lineup.he}</div>
+          </div>
+          <div className="models-count">
+            <strong>{lineup.count}</strong> / MODELS 2026
+          </div>
+        </div>
+        <div className="model-grid stag d3">
+          {lineupModels.map((m) => (
+            <div className="model" key={m.id}>
+              <div className="model-top">
+                <div className="model-year">{m.cat}</div>
+                {m.badge && <span className="model-tag new">{m.badge}</span>}
+              </div>
+              <div>
+                <div className="model-name">{m.name}</div>
+                <div className="model-he">{m.he}</div>
+                <div className="model-spec">
+                  {m.specs.slice(0, 2).map((s, i) => (
+                    <div key={i}>
+                      {s.k}
+                      <strong>{s.v}</strong>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </>
+  );
+}
+
+export function StatsView() {
+  return (
+    <>
+      <div className="sec-mark stag d1">BY THE NUMBERS · במספרים</div>
+      <div className="sec-inner">
+        <div className="tech-head stag d2">
+          <h2
+            className="tech-title"
+            dangerouslySetInnerHTML={{ __html: stats.titleHtml }}
+          />
+          <p className="tech-sub-he">{stats.introHe}</p>
+        </div>
+        <div className="stats-grid stag d3">
+          {stats.items.map((s, i) => (
+            <div className="stat-cell" key={i}>
+              <div className="stat-big">{s.value}</div>
+              <div className="stat-en">{s.en}</div>
+              <div className="stat-he">{s.he}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </>
   );
 }
 
