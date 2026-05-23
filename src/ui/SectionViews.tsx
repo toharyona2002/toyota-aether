@@ -36,7 +36,7 @@ function TechIcon({ icon }: { icon: TechIconKind }) {
 export function LineupView() {
   return (
     <>
-      <div className="sec-mark stag d1">LINEUP · דגמים</div>
+      <div className="sec-mark stag d1">BEST SELLERS · הנמכרים בישראל</div>
       <div className="sec-inner">
         <div className="models-head stag d2">
           <div>
@@ -47,7 +47,7 @@ export function LineupView() {
             <div className="models-title-he">{lineup.he}</div>
           </div>
           <div className="models-count">
-            <strong>{lineup.count}</strong> / MODELS 2026
+            TOP <strong>{lineup.count}</strong> · ISRAEL 2025
           </div>
         </div>
         <div className="model-grid stag d3">

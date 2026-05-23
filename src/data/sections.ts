@@ -66,7 +66,7 @@ type Raw = Omit<Section, "index" | "z" | "x" | "y">;
 const raw: Raw[] = [
   { id: "hero", kind: "hero", dotLabel: "HERO", counterLabel: "MOBILITY FOR ALL", sweepSub: "HERO", colorA: "#EB0A1E", colorB: "#141414" },
   { id: "manifesto", kind: "manifesto", dotLabel: "MANIFESTO", counterLabel: "MANIFESTO · מניפסט", sweepSub: "MANIFESTO · מניפסט", colorA: "#EB0A1E", colorB: "#1c1c1c" },
-  { id: "lineup", kind: "lineup", dotLabel: "LINEUP", counterLabel: "LINEUP · דגמים", sweepSub: "LINEUP · דגמים", colorA: "#d4d4d8", colorB: "#18181b" },
+  { id: "lineup", kind: "lineup", dotLabel: "TOP", counterLabel: "BEST SELLERS · הנמכרים בישראל", sweepSub: "BEST SELLERS · הנמכרים בישראל", colorA: "#d4d4d8", colorB: "#18181b" },
   { id: "technology", kind: "technology", dotLabel: "TECH", counterLabel: "TECHNOLOGY · טכנולוגיה", sweepSub: "TECHNOLOGY · טכנולוגיה", colorA: "#3b82f6", colorB: "#0f172a" },
   { id: "stats", kind: "stats", dotLabel: "NUMBERS", counterLabel: "BY THE NUMBERS · במספרים", sweepSub: "BY THE NUMBERS · במספרים", colorA: "#38bdf8", colorB: "#0b1220" },
   { id: "heritage", kind: "heritage", dotLabel: "HERITAGE", counterLabel: "HERITAGE · מורשת", sweepSub: "HERITAGE · מורשת", colorA: "#EB0A1E", colorB: "#7f1d1d" },
@@ -154,16 +154,16 @@ export const contact = {
   footRight: "MADE WITH 改善 · KAIZEN",
 };
 
-// curated flagships shown in the LINEUP grid (text + specs, no photo)
-export const lineupIds = ["chrplus", "rav4", "corolla", "landcruiser", "grsupra", "mirai"];
+// Toyota's best-selling models in Israel (2025) shown in the LINEUP grid.
+export const lineupIds = ["corollacross", "yariscross", "rav4", "corolla", "chr", "highlander"];
 export const lineupModels = lineupIds
   .map((id) => models.find((m) => m.id === id))
   .filter((m): m is Model => Boolean(m));
 
 export const lineup = {
-  titleHtml: "THE<br>LINEUP.",
-  he: "כל הליין-אפ · 2026",
-  count: `${models.length}`,
+  titleHtml: "BEST<br>SELLERS.",
+  he: "הנמכרים ביותר בישראל · 2025",
+  count: `${lineupIds.length}`,
 };
 
 export type Stat = { value: string; en: string; he: string };
