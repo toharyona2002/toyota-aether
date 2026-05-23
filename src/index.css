@@ -552,6 +552,14 @@ body {
 .model-he { font-family: var(--he); direction: rtl; font-size: 11px; color: var(--ink-dim); margin-top: 4px; position: relative; z-index: 2; }
 .model-spec { margin-top: 10px; display: flex; gap: 14px; font-family: var(--mono); font-size: 9px; color: var(--ink-dim); letter-spacing: 0.15em; text-transform: uppercase; position: relative; z-index: 2; }
 .model-spec strong { color: var(--ink); font-weight: 500; display: block; font-size: 14px; font-family: var(--body); letter-spacing: 0; margin-top: 2px; }
+/* per-engine variant rows in the lineup card */
+.model-variants { margin-top: 10px; position: relative; z-index: 2; }
+.model-variant { display: flex; align-items: baseline; gap: 12px; padding: 7px 0; border-top: 1px solid var(--line); }
+.model-variant:first-child { border-top: none; }
+.mv-eng { font-family: var(--display); font-size: clamp(18px, 1.8vw, 24px); color: #fff; min-width: 46px; letter-spacing: 0.02em; }
+.mv-stats { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-dim); white-space: nowrap; }
+.mv-stats b { color: var(--ink); font-family: var(--body); font-weight: 600; letter-spacing: 0; }
+.mv-label { margin-inline-start: auto; font-family: var(--mono); font-size: 8px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--red); border: 1px solid var(--line); padding: 2px 6px; border-radius: 3px; align-self: center; }
 
 /* ---------- MODEL SHOWCASE (per-car station) ---------- */
 .model-view {
