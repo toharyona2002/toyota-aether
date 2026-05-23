@@ -155,7 +155,7 @@ export const contact = {
 };
 
 // Toyota's best-selling models in Israel (2025) shown in the LINEUP grid.
-export const lineupIds = ["corollacross", "yariscross", "rav4", "corolla", "chr", "highlander"];
+export const lineupIds = ["yaris", "yariscross", "rav4", "corolla", "chr", "landcruiser"];
 export const lineupModels = lineupIds
   .map((id) => models.find((m) => m.id === id))
   .filter((m): m is Model => Boolean(m));
