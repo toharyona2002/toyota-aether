@@ -61,7 +61,7 @@ export function LineupView() {
                 <div className="model-name">{m.name}</div>
                 <div className="model-he">{m.he}</div>
                 <div className="model-spec">
-                  {m.specs.slice(0, 2).map((s, i) => (
+                  {m.specs.slice(0, 3).map((s, i) => (
                     <div key={i}>
                       {s.k}
                       <strong>{s.v}</strong>
