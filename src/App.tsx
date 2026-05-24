@@ -4,6 +4,7 @@ import { Scene } from "./three/Scene";
 import { Overlay } from "./ui/Overlay";
 import { Loader } from "./ui/Loader";
 import { Overlays } from "./ui/Overlays";
+import { Cursor } from "./ui/Cursor";
 import { sections, FIRST_Z } from "./data/sections";
 import { useScrollProgress, prefersReducedMotion } from "./scroll/useScrollProgress";
 import { useSectionNav } from "./scroll/useSectionNav";
@@ -44,6 +45,7 @@ export default function App() {
       </div>
 
       <Overlays />
+      <Cursor />
 
       <Overlay
         progressRef={progressRef}

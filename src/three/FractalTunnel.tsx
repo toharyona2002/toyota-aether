@@ -2,6 +2,7 @@ import { useMemo, useRef, type RefObject } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { sampleColors } from "./colors";
+import { pointer } from "../lib/pointer";
 
 type Props = { progressRef: RefObject<number>; reducedMotion: boolean };
 
@@ -17,9 +18,11 @@ const frag = /* glsl */ `
   uniform float uProgress;
   uniform vec3 uColorA;
   uniform vec3 uColorB;
+  uniform vec2 uMouse;
 
   void main(){
     vec2 uv = (gl_FragCoord.xy - 0.5 * uRes) / uRes.y;
+    uv += (uMouse - 0.5) * 0.45;   // cursor warps the tunnel
     float a = atan(uv.y, uv.x);
     float r = length(uv);
 
@@ -62,6 +65,7 @@ export function FractalTunnel({ progressRef, reducedMotion }: Props) {
       uProgress: { value: 0 },
       uColorA: { value: new THREE.Color("#eb0a1e") },
       uColorB: { value: new THREE.Color("#1a1030") },
+      uMouse: { value: new THREE.Vector2(0.5, 0.5) },
     }),
     [],
   );
@@ -75,6 +79,10 @@ export function FractalTunnel({ progressRef, reducedMotion }: Props) {
     uniforms.uProgress.value += (p - uniforms.uProgress.value) * 0.08;
     const dpr = gl.getPixelRatio();
     uniforms.uRes.value.set(size.width * dpr, size.height * dpr);
+    uniforms.uMouse.value.lerp(
+      { x: pointer.x, y: 1 - pointer.y } as THREE.Vector2,
+      0.06,
+    );
 
     if (mesh.current) {
       camera.getWorldDirection(dir);

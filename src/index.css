@@ -780,3 +780,37 @@ body {
 .stat-big { font-family: var(--display); font-size: clamp(40px, 5.5vw, 76px); line-height: 0.95; color: #fff; }
 .stat-en { font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-dim); }
 .stat-he { font-family: var(--he); direction: rtl; font-size: 13px; color: var(--ink-dim); }
+
+/* ---------- kinetic marquee bands ---------- */
+.marquee { position: fixed; left: 0; right: 0; overflow: hidden; pointer-events: none; z-index: 6; white-space: nowrap; }
+.marquee.top { top: 13vh; }
+.marquee.bottom { bottom: 11vh; }
+.marquee-track { display: inline-flex; will-change: transform; animation: marq 30s linear infinite; }
+.marquee-track.rev { animation-direction: reverse; }
+.marquee-track span {
+  font-family: var(--display);
+  font-size: clamp(44px, 7vw, 116px);
+  letter-spacing: 0.02em;
+  color: rgba(244, 241, 236, 0.07);
+  padding-inline: 0.3em;
+}
+@keyframes marq { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .marquee-track { animation: none; } }
+
+/* ---------- custom cursor ---------- */
+@media (hover: hover) and (pointer: fine) {
+  body { cursor: none; }
+  .cursor-ring, .cursor-dot { position: fixed; top: 0; left: 0; z-index: 9999; pointer-events: none; border-radius: 50%; will-change: transform; }
+  .cursor-dot { width: 6px; height: 6px; background: var(--red); }
+  .cursor-ring {
+    width: 34px; height: 34px;
+    border: 1px solid rgba(244, 241, 236, 0.6);
+    transition: width 0.25s, height 0.25s, border-color 0.25s, background 0.25s;
+  }
+  .cursor-ring.hot {
+    width: 58px; height: 58px;
+    border-color: var(--red);
+    background: rgba(235, 10, 30, 0.12);
+  }
+}
+@media (hover: none) { .cursor-ring, .cursor-dot { display: none; } }
