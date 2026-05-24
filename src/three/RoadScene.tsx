@@ -1,76 +1,150 @@
-import { useEffect, useMemo, useRef, type RefObject } from "react";
+import { useMemo, useRef, type RefObject } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 
 type Props = { progressRef: RefObject<number>; reducedMotion: boolean };
 
-const SPACING = 7; // distance between streaming markers (wrap period)
-const COUNT = 64; // markers per row
+const SEG = 140; // ribbon samples along the road
+const Z_NEAR = 14;
+const Z_FAR = -480;
+const LEN = Z_NEAR - Z_FAR;
 const HALF = 3.7; // lane half-width
-const LANE_FAR = -SPACING * COUNT;
+const SPACING = 7; // dash / post interval
+const COUNT = 70;
 
-// First-person night-drive: asphalt to the horizon, centre lane dashes and
-// roadside light posts streaming toward the camera. Sky = gradient backdrop.
+// winding centre-line: x offset as a function of world-z and a flowing phase
+function centerX(z: number, phase: number): number {
+  return Math.sin(z * 0.011 + phase) * 5.2 + Math.sin(z * 0.027 + phase * 1.7) * 2.4;
+}
+
+// triangle index shared by every ribbon (SEG pairs of verts)
+function buildIndex(): Uint16Array {
+  const idx: number[] = [];
+  for (let i = 0; i < SEG - 1; i++) {
+    const a = i * 2, b = i * 2 + 1, c = (i + 1) * 2, d = (i + 1) * 2 + 1;
+    idx.push(a, c, b, b, c, d);
+  }
+  return new Uint16Array(idx);
+}
+
 export function RoadScene({ progressRef, reducedMotion }: Props) {
-  const stream = useRef<THREE.Group>(null);
   const { camera } = useThree();
+  const roadGeo = useRef<THREE.BufferGeometry>(null);
+  const leftGeo = useRef<THREE.BufferGeometry>(null);
+  const rightGeo = useRef<THREE.BufferGeometry>(null);
+  const stream = useRef<THREE.Group>(null);
+  const headlight = useRef<THREE.PointLight>(null);
+  const phase = useRef(0);
 
-  const zs = useMemo(
+  const index = useMemo(buildIndex, []);
+  const roadPos = useMemo(() => new Float32Array(SEG * 2 * 3), []);
+  const roadNor = useMemo(() => {
+    const n = new Float32Array(SEG * 2 * 3);
+    for (let i = 0; i < SEG * 2; i++) n[i * 3 + 1] = 1;
+    return n;
+  }, []);
+  const leftPos = useMemo(() => new Float32Array(SEG * 2 * 3), []);
+  const rightPos = useMemo(() => new Float32Array(SEG * 2 * 3), []);
+  const dashZs = useMemo(
     () => Array.from({ length: COUNT }, (_, i) => -i * SPACING),
     [],
   );
 
-  useEffect(() => {
-    camera.position.set(0, 1.6, 8);
-    if (camera instanceof THREE.PerspectiveCamera) {
-      camera.fov = 72;
-      camera.updateProjectionMatrix();
-    }
-    camera.lookAt(0, 0.5, -30);
-  }, [camera]);
-
   useFrame((state, delta) => {
     void progressRef;
-    if (stream.current && !reducedMotion) {
-      stream.current.position.z = (stream.current.position.z + delta * 42) % SPACING;
+    if (!reducedMotion) phase.current += delta * 0.35;
+    const ph = phase.current;
+
+    if (stream.current) {
+      if (!reducedMotion)
+        stream.current.position.z = (stream.current.position.z + delta * 44) % SPACING;
+      const sz = stream.current.position.z;
+      for (const g of stream.current.children) {
+        g.position.x = centerX(g.position.z + sz, ph);
+      }
     }
+
+    const rp = roadGeo.current?.attributes.position;
+    const lp = leftGeo.current?.attributes.position;
+    const wp = rightGeo.current?.attributes.position;
+    for (let i = 0; i < SEG; i++) {
+      const z = Z_NEAR - (i / (SEG - 1)) * LEN;
+      const cx = centerX(z, ph);
+      if (rp) {
+        rp.setXYZ(i * 2, cx - HALF, 0, z);
+        rp.setXYZ(i * 2 + 1, cx + HALF, 0, z);
+      }
+      if (lp) {
+        lp.setXYZ(i * 2, cx - HALF - 0.08, 0.03, z);
+        lp.setXYZ(i * 2 + 1, cx - HALF + 0.08, 0.03, z);
+      }
+      if (wp) {
+        wp.setXYZ(i * 2, cx + HALF - 0.08, 0.03, z);
+        wp.setXYZ(i * 2 + 1, cx + HALF + 0.08, 0.03, z);
+      }
+    }
+    if (rp) rp.needsUpdate = true;
+    if (lp) lp.needsUpdate = true;
+    if (wp) wp.needsUpdate = true;
+
     const t = state.clock.elapsedTime;
-    camera.position.x = reducedMotion ? 0 : Math.sin(t * 0.25) * 0.35;
-    camera.position.y = 1.6 + (reducedMotion ? 0 : Math.sin(t * 0.5) * 0.07);
-    camera.lookAt(0, 0.5, -30);
+    const camX = centerX(4, ph);
+    const aheadX = centerX(-26, ph);
+    const bank = THREE.MathUtils.clamp((aheadX - camX) * 0.03, -0.12, 0.12);
+    camera.position.x = camX * 0.5 + (reducedMotion ? 0 : Math.sin(t * 0.4) * 0.15);
+    camera.position.y = 1.6 + (reducedMotion ? 0 : Math.sin(t * 0.6) * 0.05);
+    camera.position.z = 8;
+    camera.up.set(Math.sin(bank), Math.cos(bank), 0);
+    camera.lookAt(aheadX * 0.7, 0.5, -26);
+
+    if (headlight.current) headlight.current.position.set(camX * 0.5, 1.2, 2);
   });
 
   return (
     <group>
+      <pointLight ref={headlight} intensity={170} distance={75} decay={1.4} color="#fff4e8" />
+
       {/* asphalt */}
-      <mesh rotation-x={-Math.PI / 2} position={[0, 0, LANE_FAR / 2]}>
-        <planeGeometry args={[44, -LANE_FAR + 60]} />
-        <meshStandardMaterial color="#0b0b0e" roughness={0.95} metalness={0.05} />
+      <mesh frustumCulled={false}>
+        <bufferGeometry ref={roadGeo}>
+          <bufferAttribute attach="attributes-position" args={[roadPos, 3]} />
+          <bufferAttribute attach="attributes-normal" args={[roadNor, 3]} />
+          <bufferAttribute attach="index" args={[index, 1]} />
+        </bufferGeometry>
+        <meshStandardMaterial color="#0c0c10" roughness={0.5} metalness={0.25} side={THREE.DoubleSide} />
       </mesh>
 
-      {/* continuous edge lines */}
-      {[-HALF, HALF].map((x) => (
-        <mesh key={x} rotation-x={-Math.PI / 2} position={[x, 0.01, LANE_FAR / 2]}>
-          <planeGeometry args={[0.12, -LANE_FAR + 60]} />
-          <meshBasicMaterial color="#dfe3ea" transparent opacity={0.55} toneMapped={false} />
-        </mesh>
-      ))}
+      {/* glowing edge ribbons */}
+      <mesh frustumCulled={false}>
+        <bufferGeometry ref={leftGeo}>
+          <bufferAttribute attach="attributes-position" args={[leftPos, 3]} />
+          <bufferAttribute attach="index" args={[index, 1]} />
+        </bufferGeometry>
+        <meshBasicMaterial color="#e6eaf0" transparent opacity={0.65} side={THREE.DoubleSide} toneMapped={false} />
+      </mesh>
+      <mesh frustumCulled={false}>
+        <bufferGeometry ref={rightGeo}>
+          <bufferAttribute attach="attributes-position" args={[rightPos, 3]} />
+          <bufferAttribute attach="index" args={[index, 1]} />
+        </bufferGeometry>
+        <meshBasicMaterial color="#e6eaf0" transparent opacity={0.65} side={THREE.DoubleSide} toneMapped={false} />
+      </mesh>
 
-      {/* streaming markers: centre dashes + side posts */}
+      {/* streaming centre dashes + roadside posts (x set per frame) */}
       <group ref={stream}>
-        {zs.map((z, i) => (
-          <group key={i}>
-            <mesh rotation-x={-Math.PI / 2} position={[0, 0.02, z]}>
-              <planeGeometry args={[0.34, 3]} />
+        {dashZs.map((z, i) => (
+          <group key={i} position={[0, 0, z]}>
+            <mesh rotation-x={-Math.PI / 2} position={[0, 0.04, 0]}>
+              <planeGeometry args={[0.32, 3]} />
               <meshBasicMaterial color="#ffd24a" toneMapped={false} />
             </mesh>
-            <mesh position={[-HALF - 1.6, 0.5, z]}>
-              <boxGeometry args={[0.18, 1, 0.18]} />
+            <mesh position={[-HALF - 1.5, 0.5, 0]}>
+              <boxGeometry args={[0.16, 1, 0.16]} />
               <meshBasicMaterial color="#eb0a1e" toneMapped={false} />
             </mesh>
-            <mesh position={[HALF + 1.6, 0.5, z]}>
-              <boxGeometry args={[0.18, 1, 0.18]} />
-              <meshBasicMaterial color="#dfe3ea" toneMapped={false} />
+            <mesh position={[HALF + 1.5, 0.5, 0]}>
+              <boxGeometry args={[0.16, 1, 0.16]} />
+              <meshBasicMaterial color="#e6eaf0" toneMapped={false} />
             </mesh>
           </group>
         ))}
