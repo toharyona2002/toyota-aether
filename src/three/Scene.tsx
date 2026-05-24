@@ -8,8 +8,7 @@ import {
 import { BlendFunction } from "postprocessing";
 import { Vector2 } from "three";
 import { GradientBackground } from "./GradientBackground";
-import { Tunnel } from "./Tunnel";
-import { Station } from "./Station";
+import { LightTrails } from "./LightTrails";
 import { CameraRig } from "./CameraRig";
 import { ToyotaLogo } from "./ToyotaLogo";
 import { sections } from "../data/sections";
@@ -37,11 +36,7 @@ export function Scene({
 
       <CameraRig progressRef={progressRef} reducedMotion={reducedMotion} />
       <GradientBackground progressRef={progressRef} />
-      <Tunnel count={particleCount} reducedMotion={reducedMotion} />
-
-      {sections.map((s) => (
-        <Station key={s.id} section={s} reducedMotion={reducedMotion} />
-      ))}
+      <LightTrails count={Math.round(particleCount / 4)} reducedMotion={reducedMotion} />
 
       {/* Toyota-logo motif at the hero and contact stations */}
       <ToyotaLogo progressRef={progressRef} stationIndex={0} />
