@@ -8,10 +8,8 @@ import {
 import { BlendFunction } from "postprocessing";
 import { Vector2 } from "three";
 import { GradientBackground } from "./GradientBackground";
-import { LightTrails } from "./LightTrails";
+import { LiquidBlob } from "./LiquidBlob";
 import { CameraRig } from "./CameraRig";
-import { ToyotaLogo } from "./ToyotaLogo";
-import { sections } from "../data/sections";
 
 type Props = {
   progressRef: RefObject<number>;
@@ -20,27 +18,19 @@ type Props = {
   bloomIntensity: number;
 };
 
-export function Scene({
-  progressRef,
-  reducedMotion,
-  particleCount,
-  bloomIntensity,
-}: Props) {
+export function Scene({ progressRef, reducedMotion, bloomIntensity }: Props) {
   return (
     <>
       <color attach="background" args={["#08080a"]} />
-      <fogExp2 attach="fog" args={["#05030f", 0.019]} />
-      <ambientLight intensity={0.7} />
-      <pointLight position={[10, 10, 10]} intensity={120} color="#a78bfa" />
-      <pointLight position={[-10, -8, -20]} intensity={120} color="#22d3ee" />
+      <fogExp2 attach="fog" args={["#05030f", 0.02]} />
+      <ambientLight intensity={0.5} />
+      <pointLight position={[8, 10, 8]} intensity={160} color="#ffffff" />
+      <pointLight position={[-10, -6, 4]} intensity={120} color="#ff3344" />
+      <pointLight position={[6, -8, -6]} intensity={90} color="#3b82f6" />
 
       <CameraRig progressRef={progressRef} reducedMotion={reducedMotion} />
       <GradientBackground progressRef={progressRef} />
-      <LightTrails count={Math.round(particleCount / 4)} reducedMotion={reducedMotion} />
-
-      {/* Toyota-logo motif at the hero and contact stations */}
-      <ToyotaLogo progressRef={progressRef} stationIndex={0} />
-      <ToyotaLogo progressRef={progressRef} stationIndex={sections.length - 1} />
+      <LiquidBlob progressRef={progressRef} reducedMotion={reducedMotion} />
 
       <EffectComposer>
         <Bloom
