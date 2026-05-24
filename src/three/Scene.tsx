@@ -8,8 +8,7 @@ import {
 import { BlendFunction } from "postprocessing";
 import { Vector2 } from "three";
 import { GradientBackground } from "./GradientBackground";
-import { LiquidBlob } from "./LiquidBlob";
-import { CameraRig } from "./CameraRig";
+import { RoadScene } from "./RoadScene";
 
 type Props = {
   progressRef: RefObject<number>;
@@ -28,9 +27,8 @@ export function Scene({ progressRef, reducedMotion, bloomIntensity }: Props) {
       <pointLight position={[-10, -6, 4]} intensity={120} color="#ff3344" />
       <pointLight position={[6, -8, -6]} intensity={90} color="#3b82f6" />
 
-      <CameraRig progressRef={progressRef} reducedMotion={reducedMotion} />
       <GradientBackground progressRef={progressRef} />
-      <LiquidBlob progressRef={progressRef} reducedMotion={reducedMotion} />
+      <RoadScene progressRef={progressRef} reducedMotion={reducedMotion} />
 
       <EffectComposer>
         <Bloom
