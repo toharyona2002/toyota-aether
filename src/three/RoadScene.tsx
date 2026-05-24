@@ -50,6 +50,39 @@ export function RoadScene({ progressRef, reducedMotion }: Props) {
     [],
   );
 
+  // static UVs for the asphalt (u across, v along — tiled)
+  const roadUv = useMemo(() => {
+    const uv = new Float32Array(SEG * 2 * 2);
+    for (let i = 0; i < SEG; i++) {
+      const v = (i / (SEG - 1)) * 80;
+      uv[i * 4] = 0;
+      uv[i * 4 + 1] = v;
+      uv[i * 4 + 2] = 6;
+      uv[i * 4 + 3] = v;
+    }
+    return uv;
+  }, []);
+
+  // procedural asphalt grain → bump + roughness variation (wet/dry patches)
+  const asphaltTex = useMemo(() => {
+    const s = 256;
+    const c = document.createElement("canvas");
+    c.width = c.height = s;
+    const ctx = c.getContext("2d")!;
+    const img = ctx.createImageData(s, s);
+    for (let i = 0; i < s * s; i++) {
+      const v = 110 + Math.random() * 90;
+      img.data[i * 4] = v;
+      img.data[i * 4 + 1] = v;
+      img.data[i * 4 + 2] = v;
+      img.data[i * 4 + 3] = 255;
+    }
+    ctx.putImageData(img, 0, 0);
+    const tex = new THREE.CanvasTexture(c);
+    tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+    return tex;
+  }, []);
+
   useFrame((state, delta) => {
     void progressRef;
     if (!reducedMotion) phase.current += delta * 0.35;
@@ -109,9 +142,19 @@ export function RoadScene({ progressRef, reducedMotion }: Props) {
         <bufferGeometry ref={roadGeo}>
           <bufferAttribute attach="attributes-position" args={[roadPos, 3]} />
           <bufferAttribute attach="attributes-normal" args={[roadNor, 3]} />
+          <bufferAttribute attach="attributes-uv" args={[roadUv, 2]} />
           <bufferAttribute attach="index" args={[index, 1]} />
         </bufferGeometry>
-        <meshStandardMaterial color="#0c0c10" roughness={0.5} metalness={0.25} side={THREE.DoubleSide} />
+        <meshStandardMaterial
+          color="#0a0a0d"
+          roughness={0.42}
+          metalness={0.55}
+          bumpMap={asphaltTex}
+          bumpScale={0.5}
+          roughnessMap={asphaltTex}
+          envMapIntensity={1.2}
+          side={THREE.DoubleSide}
+        />
       </mesh>
 
       {/* glowing edge ribbons */}

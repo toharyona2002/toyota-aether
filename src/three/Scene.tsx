@@ -1,12 +1,14 @@
-import { type RefObject } from "react";
+import { Suspense, type RefObject } from "react";
 import {
   EffectComposer,
   Bloom,
   Vignette,
   ChromaticAberration,
+  DepthOfField,
 } from "@react-three/postprocessing";
 import { BlendFunction } from "postprocessing";
 import { Vector2 } from "three";
+import { Environment } from "@react-three/drei";
 import { GradientBackground } from "./GradientBackground";
 import { RoadScene } from "./RoadScene";
 
@@ -27,10 +29,21 @@ export function Scene({ progressRef, reducedMotion, bloomIntensity }: Props) {
       <pointLight position={[-10, -6, 4]} intensity={120} color="#ff3344" />
       <pointLight position={[6, -8, -6]} intensity={90} color="#3b82f6" />
 
+      {/* image-based reflections for the wet asphalt look */}
+      <Suspense fallback={null}>
+        <Environment preset="night" />
+      </Suspense>
+
       <GradientBackground progressRef={progressRef} />
       <RoadScene progressRef={progressRef} reducedMotion={reducedMotion} />
 
       <EffectComposer>
+        <DepthOfField
+          focusDistance={0.012}
+          focalLength={0.04}
+          bokehScale={2.6}
+          height={480}
+        />
         <Bloom
           intensity={bloomIntensity}
           luminanceThreshold={0.5}
@@ -43,7 +56,7 @@ export function Scene({ progressRef, reducedMotion, bloomIntensity }: Props) {
           radialModulation
           modulationOffset={0.3}
         />
-        <Vignette eskil={false} offset={0.15} darkness={0.88} />
+        <Vignette eskil={false} offset={0.15} darkness={0.9} />
       </EffectComposer>
     </>
   );
