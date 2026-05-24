@@ -157,7 +157,7 @@ export const heritage = {
 export const contact = {
   titleHtml: "YOUR <em>NEXT</em><br>MOVE.",
   he: "קח את הצעד הבא · הזמן נסיעת מבחן",
-  primary: "Book Test Drive →",
+  primary: "Book Test Drive",
   secondary: "Explore Lineup",
   footLeft: "© 2026 TOYOTA · ALL RIGHTS RESERVED",
   footRight: "MADE WITH 改善 · KAIZEN",

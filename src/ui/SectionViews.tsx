@@ -228,7 +228,7 @@ export function ContactView() {
           <p className="cta-he stag d3">{contact.he}</p>
           <div className="cta-buttons stag d4">
             <a className="btn" href="#">
-              {contact.primary}
+              {contact.primary} <span className="cta-arrow">→</span>
             </a>
             <a className="btn outline" href="#">
               {contact.secondary}

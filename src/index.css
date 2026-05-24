@@ -179,42 +179,97 @@ body {
   left: 0;
   right: 0;
   z-index: 80;
-  padding: 20px clamp(20px, 4vw, 60px);
+  padding: 16px clamp(14px, 3vw, 40px);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: linear-gradient(180deg, rgba(8, 8, 10, 0.75) 0%, transparent 100%);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  pointer-events: none;
 }
-.nav-logo {
-  font-family: var(--display);
-  font-size: 20px;
-  letter-spacing: 0.35em;
+.nav > * {
+  pointer-events: auto;
+}
+/* circular logo pill */
+.nav-logo-pill {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
-  gap: 12px;
-}
-.nav-logo svg {
-  width: 32px;
-  height: auto;
-}
-.nav-cta {
+  justify-content: center;
+  background: rgba(18, 18, 22, 0.55);
   border: 1px solid var(--line);
-  padding: 9px 18px;
-  font-size: 10px;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  background: transparent;
   color: var(--ink);
   cursor: pointer;
-  transition: all 0.3s;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: border-color 0.3s, transform 0.3s;
+}
+.nav-logo-pill:hover {
+  border-color: var(--ink);
+  transform: translateY(-1px);
+}
+.nav-logo-pill svg {
+  width: 24px;
+  height: auto;
+}
+/* links pill */
+.nav-pill {
+  display: flex;
+  align-items: center;
+  gap: clamp(10px, 1.6vw, 24px);
+  background: rgba(18, 18, 22, 0.55);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 8px 10px 8px clamp(14px, 1.8vw, 22px);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.nav-link {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 2px;
   font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  transition: color 0.25s;
+}
+.nav-link:hover {
+  color: var(--ink);
+}
+.nav-cta {
+  border: none;
+  border-radius: 10px;
+  padding: 9px 16px;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  background: var(--red);
+  color: #fff;
+  cursor: pointer;
+  font-family: var(--mono);
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  transition: filter 0.25s, transform 0.25s;
 }
 .nav-cta:hover {
-  background: var(--red);
-  border-color: var(--red);
-  color: #fff;
+  filter: brightness(1.12);
+  transform: translateY(-1px);
+}
+.cta-arrow {
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+.nav-cta:hover .cta-arrow {
+  transform: translateX(3px);
+}
+@media (max-width: 640px) {
+  .nav-link {
+    display: none;
+  }
 }
 
 /* ---------- side progress dots ---------- */
@@ -680,6 +735,8 @@ body {
 .btn:hover { background: var(--red); border-color: var(--red); color: #fff; gap: 18px; }
 .btn.outline { background: transparent; color: var(--ink); }
 .btn.outline:hover { color: #fff; }
+.btn .cta-arrow { display: inline-block; transition: transform 0.2s ease; }
+.btn:hover .cta-arrow { transform: translateX(4px); }
 .cta-foot { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; font-family: var(--mono); font-size: 10px; color: var(--ink-dim); letter-spacing: 0.2em; text-transform: uppercase; padding-top: 24px; border-top: 1px solid var(--line); max-width: 900px; margin: 0 auto; width: 100%; }
 
 /* ---------- FLOATING CAR CARDS (ambient, scroll-driven) ---------- */
